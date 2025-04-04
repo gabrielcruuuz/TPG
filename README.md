@@ -1,4 +1,4 @@
-I choose to fetch all the pages from the openlibrary API to be able to create a input search field by title
+I choose to fetch all the pages from the openlibrary API at once to be able to create a input search field by title
 
 As far I understood from openlibrary API it's like a wikipedia so anyone can contirbute to the data there, because of this some of requests for the https://openlibrary.org/works/{BookId}.json don't always return the same data, because of this some of the
 books details will not have the description infomration or even the cover image.
