@@ -1,0 +1,63 @@
+# Build results
+bin/
+obj/
+out/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Rider / JetBrains
+.idea/
+
+# VS Code
+.vscode/
+
+# Visual Studio
+.vs/
+
+# ASP.NET / wwwroot
+wwwroot/**/*.map
+wwwroot/**/*.gz
+wwwroot/**/*.br
+
+# Auto-generated files
+Generated_Code/
+*.g.cs
+*.g.i.cs
+
+# Config files
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.local.json
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Others
+*.db
+*.sqlite
+*.pdb
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+*.nuspec
+.nuget/
+packages/
+project.lock.json
+
+# Compiled DLLs
+*.dll
+*.exe
+
+# Publish output
+publish/
+*.Publish.xml
