@@ -1,0 +1,42 @@
+﻿@page "/Books/{bookId}"
+@using LaunchQ.TakeHomeProject.Components.Models
+@inject HttpClient Http
+
+<PageTitle>Book Details</PageTitle>
+
+<h3>@book?.Title</h3>
+
+@if (book == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div>
+        @if(book.Covers != null)
+        {
+            <img src="https://covers.openlibrary.org/b/id/@book.Covers.FirstOrDefault()-L.jpg" alt="@book.Title" />
+        }
+        <p>@book.Description</p>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string BookId { get; set; }
+
+    private BookInfo book;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            book = await Http.GetFromJsonAsync<BookInfo>($"https://openlibrary.org/works/{BookId}.json");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error fetching data from openLibrary API. Exception: {e.Message}");
+            throw e;
+        }
+    }
+}

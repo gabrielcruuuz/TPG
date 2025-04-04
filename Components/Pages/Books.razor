@@ -1,0 +1,137 @@
+﻿@page "/Books"
+@using LaunchQ.TakeHomeProject.Components.Models
+@inject HttpClient Http
+
+<PageTitle>Books</PageTitle>
+
+<h3>Books by Stephen King</h3>
+
+<input @bind="SearchTerm" @bind:event="oninput" placeholder="Search by title" style="margin-bottom: 1rem; padding: 0.5rem; width: 300px;" />
+
+@if (isLoading)
+{
+    <p>Loading...</p>
+}
+else if (filteredBooks == null || filteredBooks.Count == 0)
+{
+    <p>No books found.</p>
+}
+else
+{
+    <h4>Title</h4>
+    <ul>
+        @foreach (var book in books)
+        {
+            <li>
+                <a href="/Books/@book.Key.Replace("/works/", "")">@book.Title</a>
+            </li>
+        }
+    </ul>
+
+    <div style="margin-top: 1rem;">
+        <button @onclick="PreviousPage" disabled="@(!CanGoPrevious)">Previous</button>
+        <span style="margin: 0 1rem;">Page @currentPage of @totalPages</span>
+        <button @onclick="NextPage" disabled="@(!CanGoNext)">Next</button>
+    </div>
+
+    <h4>Total: @filteredBooks.Count</h4>
+}
+
+@code {
+    private List<Book> allBooks = new();
+    private List<Book> filteredBooks = new();
+    private List<Book> books = new();
+    private bool isLoading = true;
+
+    private int limit = 50;
+    private int currentPage = 1;
+    private int totalPages = 0;
+    private string searchTerm = string.Empty;
+
+    private bool CanGoPrevious => currentPage > 1;
+    private bool CanGoNext => currentPage < totalPages;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAllBooks();
+        FilterBooks();
+        isLoading = false;
+    }
+
+    private async Task LoadAllBooks()
+    {
+        var authorId = "OL19981A";
+        var baseUrl = $"https://openlibrary.org/authors/{authorId}/works.json";
+
+        string nextUrl = baseUrl;
+
+        try
+        {
+            while (!string.IsNullOrEmpty(nextUrl))
+            {
+                var response = await Http.GetFromJsonAsync<AuthorWorksResponse>(nextUrl);
+
+                if (response?.Entries == null || response.Entries.Length == 0)
+                    break;
+
+                allBooks.AddRange(response.Entries);
+                nextUrl = string.IsNullOrEmpty(response.Links?.Next) ? "" : "https://openlibrary.org" + response.Links.Next;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading books: {ex.Message}");
+        }
+    }
+
+    private void FilterBooks()
+    {
+        currentPage = 1;
+
+        if (string.IsNullOrWhiteSpace(searchTerm))
+            filteredBooks = allBooks;
+        else
+            filteredBooks = allBooks
+                .Where(b => !string.IsNullOrEmpty(b.Title) && b.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+        totalPages = (int)Math.Ceiling((double)filteredBooks.Count / limit);
+        UpdateCurrentPage();
+    }
+
+    private void UpdateCurrentPage()
+    {
+        books = filteredBooks
+            .Skip((currentPage - 1) * limit)
+            .Take(limit)
+            .ToList();
+    }
+
+    private void NextPage()
+    {
+        if (CanGoNext)
+        {
+            currentPage++;
+            UpdateCurrentPage();
+        }
+    }
+
+    private void PreviousPage()
+    {
+        if (CanGoPrevious)
+        {
+            currentPage--;
+            UpdateCurrentPage();
+        }
+    }
+
+    private string SearchTerm
+    {
+        get => searchTerm;
+        set
+        {
+            searchTerm = value;
+            FilterBooks();
+        }
+    }
+}
