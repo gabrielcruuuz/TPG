@@ -4,7 +4,7 @@ From what I understand, OpenLibrary works similarly to Wikipedia — it's a coll
 
 Some books may not include a description or even a cover image, depending on the completeness of their data.
 
-For this project, I'm using Stephen King as the selected author. A good example of a well-documented book is Chamber of Horrors.
+For this project, I'm using Stephen King as the selected author. A good example of book is Chamber of Horrors.
 ![image](https://github.com/user-attachments/assets/6e903ca3-7d3f-43e8-b1a3-5830dd78c46c)
 
 Response JSON:
